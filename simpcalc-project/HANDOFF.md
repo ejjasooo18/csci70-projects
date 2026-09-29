@@ -1,20 +1,22 @@
-# Handoff: Scanner is done, parser and driver are next
+# Handoff: Scanner and Parser are done, driver and submission are next
 
-**For:** Member B (Parser) and Member C (Driver, tests, submission)
+**For:** Member C (Driver, tests, submission)
 **Due:** Wed, Sep 30, 2026. The full plan and task list are in [plan.md](plan.md).
 
 ## TL;DR
 - The scanner is finished and tested. It produces all 9 `sample_output_scan_*.txt` files **byte for byte**.
-- **B:** write `parser.c` / `parser.h` against the API below.
+- The parser is finished and tested. It produces all 9 `sample_output_parse_*.txt` files **byte for byte**.
 - **C:** write `main.c`, the test script and the README, and put the zip together.
-- **Don't edit `scanner.c` or `token.h`** without telling me. Several of its oddities are on purpose (see "Things that look like bugs but aren't").
+- **Don't edit `scanner.c`, `token.h`, `parser.c`, or `parser.h`** without telling the team.
 
 ## What's in the repo
 | File | What it is |
 |---|---|
-| [token.h](token.h) | `TokenType` enum, `Token` struct, `TOKEN_NAMES[]`. **B and C both include this.** |
+| [token.h](token.h) | `TokenType` enum, `Token` struct, `TOKEN_NAMES[]`. **Used by scanner, parser, and main.** |
 | [scanner.h](scanner.h) | Scanner API: `scanner_init()` and `gettoken()` |
 | [scanner.c](scanner.c) | The scanner. Its header comment describes the number DFA. |
+| [parser.h](parser.h) | Parser API: `parse_program()` |
+| [parser.c](parser.c) | The parser. Implements all 16 recursive-descent grammar procedures. |
 | [scan_test.c](scan_test.c) | A throwaway driver that runs only the scanner on one file. Not part of the final program. |
 | `PROJECT SAMPLES-1/` | The instructor's sample inputs and expected outputs. **Never write output into this folder.** Copy it first. |
 
@@ -51,25 +53,16 @@ typedef struct {
    ```
    `fc` should print "no differences encountered". (In Git Bash, use `diff` instead.)
 
-## Member B: Parser
-**Goal:** make `parser.c` produce the `sample_output_parse_*.txt` files.
+## Member B: Parser ✅ (Done)
+**Goal:** make `parser.c` produce the `sample_output_parse_*.txt` files. **Status: Finished and verified across all 9 samples.**
 
-- Expose one entry point for C to call. Suggested signature:
+- Public entry point for C to call:
   ```c
   /* parser.h */
   void parse_program(FILE *parse_out, const char *filename);  /* filename goes in "... is a valid SimpCalc program" */
   ```
-- Read the first token with `gettoken()` into a global `Token cur`, then call `Prg()`.
-- Write `match(TokenType expected)`. On a mismatch, print
-  `Parse Error on line %d: %s Expected.` using `cur.line` and `TOKEN_NAMES[expected]`, with **no trailing newline**, then stop.
-- **No trailing newline on error, but one after "is a valid SimpCalc program".** Check with `cat -A` or a hex viewer.
-- Things that will trip you up:
-  - The spec's grammar mislabels `<=` and `>=` in `Rel`. Just accept all six relational tokens.
-  - Don't add `AND`/`OR` to the grammar. Samples 3, 7, 8 and 9 expect `Colon Expected.` when they appear.
-  - Use `Blk → ε` for anything that isn't Identifier/PRINT/IF.
-  - `Val` falls back to `( Exp )`, so a bad token there gives `LeftParen Expected.`
-- Error handling: when the parser hits the first error, it must stop and return to C's code. A global `int failed` flag checked after every call works. So does `setjmp`/`longjmp`, which is less typing.
-- The checklist of sample-derived rules is in section 4 of [plan.md](plan.md).
+- Reads tokens with `gettoken()` and stops on the first syntax error.
+- Draining the scanner after `parse_program()` is required so that `scan_out` captures all tokens in the file.
 
 ## Member C: Driver, tests, submission
 **Goal:** one program that runs in a folder and writes a scan file and a parse file for every `*_input*.txt`.

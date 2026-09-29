@@ -6,7 +6,7 @@
 | Member | Part | Status |
 |---|---|---|
 | A | Scanner (`token.h`, `scanner.h`, `scanner.c`) | ✅ **Done.** Matches all 9 `sample_output_scan_*.txt` byte for byte |
-| B | Parser (`parser.h`, `parser.c`) | ⬜ To do |
+| B | Parser (`parser.h`, `parser.c`) | ✅ **Done.** Matches all 9 `sample_output_parse_*.txt` byte for byte |
 | C | Driver, tests, submission (`main.c`, test script, README, zip) | ⬜ To do |
 
 Read [HANDOFF.md](HANDOFF.md) first.
@@ -34,13 +34,13 @@ Only change `token.h` after telling the other two.
 ### Member A: Scanner ✅ done
 The DFA, keywords, strings, comments and every lexical-error format are implemented. See the header comment in [scanner.c](scanner.c).
 
-### Member B: Parser (`parser.c`, `parser.h`)
-1. Write one function per nonterminal: `Prg Blk Stm Argfollow Arg Iffollow Exp Trmfollow Trm Facfollow Fac Litfollow Lit Val Cnd Rel`.
-2. Use a global `Token cur` and `match(TokenType expected)`: if it matches, advance with `gettoken()`; otherwise print the error and **stop parsing that file**.
-3. Print the messages: `Assignment Statement Recognized`, `Print Statement Recognized`, `If Statement Begins` (at start of IF), and `If Statement Ends` (after Iffollow).
-4. On success, print `<filename> is a valid SimpCalc program`.
-5. On error, print `Parse Error on line N: <TokenName> Expected.` (e.g. `Colon Expected.`) and stop. Stopping can be a `longjmp` or an `error` flag checked after each call.
-6. Test on samples 1, 3, 5–9. (Samples 2 and 4 fail on line 1/3 with `Assign Expected.`)
+### Member B: Parser (`parser.c`, `parser.h`) ✅ done
+1. Write one function per nonterminal: `Prg Blk Stm Argfollow Arg Iffollow Exp Trmfollow Trm Facfollow Fac Litfollow Lit Val Cnd Rel`. (Done)
+2. Use a global `Token cur` and `match(TokenType expected)`: if it matches, advance with `gettoken()`; otherwise print the error and **stop parsing that file**. (Done)
+3. Print the messages: `Assignment Statement Recognized`, `Print Statement Recognized`, `If Statement Begins` (at start of IF), and `If Statement Ends` (after Iffollow). (Done)
+4. On success, print `<filename> is a valid SimpCalc program`. (Done)
+5. On error, print `Parse Error on line N: <TokenName> Expected.` (e.g. `Colon Expected.`) and stop. Stopping can be a `longjmp` or an `error` flag checked after each call. (Done)
+6. Test on all 9 samples. (All 9 samples verified and passing byte-for-byte). (Done)
 
 ### Member C: Driver, integration, tests, submission (`main.c`, test script, README)
 1. Install gcc (see HANDOFF.md). The build command is `gcc -Wall -o simpcalc main.c scanner.c parser.c`.
