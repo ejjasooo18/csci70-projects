@@ -9,31 +9,31 @@
  * stops at the first syntax error using longjmp().
  *
  * Grammar summary:
- *   Prg       -> Blk
+ *   Prg       -> Blk EndOfFile
  *   Blk       -> Stm Blk | e          (e when cur not in {Identifier,PRINT,IF})
  *   Stm       -> Identifier := Exp ;
  *             |  PRINT ( Arg Argfollow ) ;
- *             |  IF Cnd : Blk Iffollow ;
+ *             |  IF Cnd : Blk Iffollow
  *   Argfollow -> , Arg Argfollow | e
- *   Arg       -> Exp
- *   Iffollow  -> ELSE Blk ENDIF | ENDIF
- *   Exp       -> - Trm | Trm
+ *   Arg       -> String | Exp
+ *   Iffollow  -> ENDIF ; | ELSE Blk ENDIF ;
+ *   Exp       -> Trm Trmfollow
  *   Trmfollow -> + Trm Trmfollow | - Trm Trmfollow | e
- *   Trm       -> Fac Trmfollow
+ *   Trm       -> Fac Facfollow
  *   Facfollow -> * Fac Facfollow | / Fac Facfollow | e
- *   Fac       -> Lit Facfollow
+ *   Fac       -> Lit Litfollow
  *   Litfollow -> ** Lit Litfollow | e
- *   Lit       -> Val Litfollow
- *   Val       -> Identifier | Number | String | SQRT ( Exp ) | ( Exp )
+ *   Lit       -> - Val | Val
+ *   Val       -> Identifier | Number | SQRT ( Exp ) | ( Exp )
  *   Cnd       -> Exp Rel Exp
  *   Rel       -> < | = | > | <= | >= | !=
  */
 #include <setjmp.h>
 #include "parser.h"
 
-static FILE   *pout;        /* parse output file                              */
-static Token   cur;         /* current lookahead token                        */
-static jmp_buf err_jmp;    /* longjmp target on first parse error            */
+static FILE   *pout;        /* parse output file */
+static Token   cur;         /* current lookahead token */
+static jmp_buf err_jmp;    /* longjmp target on first parse error */
 
 static void Prg(void);
 static void Blk(void);
@@ -58,7 +58,7 @@ static void match(TokenType expected)
     if (cur.type == expected) {
         cur = gettoken();
     } else {
-        fprintf(pout, "Parse Error on line %d: %s Expected.",
+        fprintf(pout, "Parse Error on line %d: %s Expected.\n",
                 cur.line, TOKEN_NAMES[expected]);
         longjmp(err_jmp, 1);
     }
@@ -67,97 +67,190 @@ static void match(TokenType expected)
 /* Rel -> < | = | > | <= | >= | != */
 static void Rel(void)
 {
-    /* TODO: implement */
+    if (cur.type == T_LT || cur.type == T_EQUAL || cur.type == T_GT ||
+        cur.type == T_LTEQUAL || cur.type == T_GTEQUAL || cur.type == T_NOTEQUAL) {
+        cur = gettoken();
+    } else {
+        fprintf(pout, "Parse Error on line %d: Missing relational operator.\n", cur.line);
+        longjmp(err_jmp, 1);
+    }
 }
 
-/* Val -> Identifier | Number | String | SQRT(Exp) | (Exp) */
+/* Val -> Identifier | Number | SQRT ( Exp ) | ( Exp ) */
 static void Val(void)
 {
-    /* TODO: implement */
+    if (cur.type == T_IDENTIFIER) {
+        match(T_IDENTIFIER);
+    } else if (cur.type == T_NUMBER) {
+        match(T_NUMBER);
+    } else if (cur.type == T_SQRT) {
+        match(T_SQRT);
+        match(T_LPAREN);
+        Exp();
+        match(T_RPAREN);
+    } else {
+        match(T_LPAREN);
+        Exp();
+        match(T_RPAREN);
+    }
+}
+
+/* Lit -> - Val | Val */
+static void Lit(void)
+{
+    if (cur.type == T_MINUS) {
+        match(T_MINUS);
+        Val();
+    } else {
+        Val();
+    }
 }
 
 /* Litfollow -> ** Lit Litfollow | e */
 static void Litfollow(void)
 {
-    /* TODO: implement */
+    if (cur.type == T_RAISE) {
+        match(T_RAISE);
+        Lit();
+        Litfollow();
+    }
 }
 
-/* Lit -> Val Litfollow */
-static void Lit(void)
+/* Fac -> Lit Litfollow */
+static void Fac(void)
 {
-    /* TODO: implement */
+    Lit();
+    Litfollow();
 }
 
 /* Facfollow -> * Fac Facfollow | / Fac Facfollow | e */
 static void Facfollow(void)
 {
-    /* TODO: implement */
+    if (cur.type == T_MULTIPLY) {
+        match(T_MULTIPLY);
+        Fac();
+        Facfollow();
+    } else if (cur.type == T_DIVIDE) {
+        match(T_DIVIDE);
+        Fac();
+        Facfollow();
+    }
 }
 
-/* Fac -> Lit Facfollow */
-static void Fac(void)
+/* Trm -> Fac Facfollow */
+static void Trm(void)
 {
-    /* TODO: implement */
+    Fac();
+    Facfollow();
 }
 
 /* Trmfollow -> + Trm Trmfollow | - Trm Trmfollow | e */
 static void Trmfollow(void)
 {
-    /* TODO: implement */
+    if (cur.type == T_PLUS) {
+        match(T_PLUS);
+        Trm();
+        Trmfollow();
+    } else if (cur.type == T_MINUS) {
+        match(T_MINUS);
+        Trm();
+        Trmfollow();
+    }
 }
 
-/* Trm -> Fac Trmfollow */
-static void Trm(void)
-{
-    /* TODO: implement */
-}
-
-/* Exp -> - Trm | Trm */
+/* Exp -> Trm Trmfollow */
 static void Exp(void)
 {
-    /* TODO: implement */
+    Trm();
+    Trmfollow();
 }
 
 /* Cnd -> Exp Rel Exp */
 static void Cnd(void)
 {
-    /* TODO: implement */
+    Exp();
+    Rel();
+    Exp();
 }
 
-/* Arg -> Exp */
+/* Arg -> String | Exp */
 static void Arg(void)
 {
-    /* TODO: implement */
+    if (cur.type == T_STRING) {
+        match(T_STRING);
+    } else {
+        Exp();
+    }
 }
 
 /* Argfollow -> , Arg Argfollow | e */
 static void Argfollow(void)
 {
-    /* TODO: implement */
+    if (cur.type == T_COMMA) {
+        match(T_COMMA);
+        Arg();
+        Argfollow();
+    }
 }
 
-/* Iffollow -> ELSE Blk ENDIF | ENDIF; prints "If Statement Ends" after ENDIF. */
+/* Iffollow -> ELSE Blk ENDIF ; | ENDIF ; */
 static void Iffollow(void)
 {
-    /* TODO: implement */
+    if (cur.type == T_ELSE) {
+        match(T_ELSE);
+        Blk();
+        match(T_ENDIF);
+        match(T_SEMICOLON);
+    } else {
+        match(T_ENDIF);
+        match(T_SEMICOLON);
+    }
 }
 
-/* Stm -> Identifier := Exp ; | PRINT(Arg Argfollow) ; | IF Cnd : Blk Iffollow ; */
+/* Stm -> Identifier := Exp ; | PRINT ( Arg Argfollow ) ; | IF Cnd : Blk Iffollow */
 static void Stm(void)
 {
-    /* TODO: implement */
+    if (cur.type == T_IDENTIFIER) {
+        match(T_IDENTIFIER);
+        match(T_ASSIGN);
+        Exp();
+        match(T_SEMICOLON);
+        fprintf(pout, "Assignment Statement Recognized\n");
+    } else if (cur.type == T_PRINT) {
+        match(T_PRINT);
+        match(T_LPAREN);
+        Arg();
+        Argfollow();
+        match(T_RPAREN);
+        match(T_SEMICOLON);
+        fprintf(pout, "Print Statement Recognized\n");
+    } else if (cur.type == T_IF) {
+        match(T_IF);
+        fprintf(pout, "If Statement Begins\n");
+        Cnd();
+        match(T_COLON);
+        Blk();
+        Iffollow();
+        fprintf(pout, "If Statement Ends\n");
+    } else {
+        match(T_IDENTIFIER);
+    }
 }
 
 /* Blk -> Stm Blk | e  (e when cur not in {Identifier, PRINT, IF}) */
 static void Blk(void)
 {
-    /* TODO: implement */
+    if (cur.type == T_IDENTIFIER || cur.type == T_PRINT || cur.type == T_IF) {
+        Stm();
+        Blk();
+    }
 }
 
-/* Prg -> Blk, then expects T_EOF. */
+/* Prg -> Blk EndOfFile */
 static void Prg(void)
 {
-    /* TODO: implement */
+    Blk();
+    match(T_EOF);
 }
 
 /* Runs the full parse and writes the result line to parse_out. */
