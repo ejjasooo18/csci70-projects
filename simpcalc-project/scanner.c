@@ -1,7 +1,7 @@
 /*
  * scanner.c - Lexical analyzer for the SimpCalc language.
- *
- * CSCI 70 Project #1: Scanning and Parsing
+ * Authors: Keith Ayeras, Elijem Timothy Jaso, Dave Predigua
+ * CSCI 70 SimpCalc Project: Scanning and Parsing
  *
  * Reads a SimpCalc source file one character at a time and groups the
  * characters into tokens (identifiers, keywords, numbers, strings, operators
@@ -152,6 +152,8 @@ static void append(char *buf, int *len, int c)
     }
 }
 
+int eof_emitted = 0;
+
 void scanner_init(FILE *in, FILE *scan_out)
 {
     src = in;
@@ -159,6 +161,7 @@ void scanner_init(FILE *in, FILE *scan_out)
     line = 1;
     pushback = NO_CHAR;
     pending_dot = 0;
+    eof_emitted = 0;
 }
 
 /* Skips whitespace and // comments. Returns the first character after them. */
@@ -308,8 +311,17 @@ Token gettoken(void)
     c = skip_blanks();
     start_line = line;
 
-    if (c == EOF)
-        return make_token(T_EOF, " ", start_line);
+    if (c == EOF) {
+        if (!eof_emitted) {
+            eof_emitted = 1;
+            return make_token(T_EOF, " ", start_line);
+        }
+        Token t;
+        t.type = T_EOF;
+        strncpy(t.lexeme, " ", MAX_LEXEME - 1);
+        t.line = start_line;
+        return t;
+    }
     if (isalpha(c) || c == '_')
         return scan_word(c, start_line);
     if (isdigit(c))

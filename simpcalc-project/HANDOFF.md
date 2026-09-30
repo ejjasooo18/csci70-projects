@@ -1,6 +1,6 @@
 # Handoff: Scanner and Parser are done, driver and submission are next
 
-**For:** Member C (Driver, tests, submission)
+**For:** Dave Predigua (Driver, tests, submission)
 **Due:** Wed, Sep 30, 2026. The full plan and task list are in [plan.md](plan.md).
 
 ## TL;DR
@@ -53,7 +53,7 @@ typedef struct {
    ```
    `fc` should print "no differences encountered". (In Git Bash, use `diff` instead.)
 
-## Member B: Parser ✅ (Done)
+## Elijem Timothy Jaso: Parser ✅ (Done)
 **Goal:** make `parser.c` produce the `sample_output_parse_*.txt` files. **Status: Finished and verified across all 9 samples.**
 
 - Public entry point for C to call:
@@ -64,7 +64,7 @@ typedef struct {
 - Reads tokens with `gettoken()` and stops on the first syntax error.
 - Draining the scanner after `parse_program()` is required so that `scan_out` captures all tokens in the file.
 
-## Member C: Driver, tests, submission
+## Dave Predigua: Driver, tests, submission
 **Goal:** one program that runs in a folder and writes a scan file and a parse file for every `*_input*.txt`.
 
 - In `main.c`, for each file whose name contains `_input`:

@@ -1,7 +1,7 @@
 /*
  * parse_test.c - Standalone test driver for the SimpCalc parser.
- *
- * CSCI 70 Project #1: Scanning and Parsing
+ * Authors: Keith Ayeras, Elijem Timothy Jaso, Dave Predigua
+ * CSCI 70 SimpCalc Project: Scanning and Parsing
  *
  * Usage: parse_test <input.txt> <output_parse.txt>
  * Runs the scanner and parser on one input file and writes parse output.

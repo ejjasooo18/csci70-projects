@@ -1,7 +1,7 @@
 /*
  * parser.c - Recursive-descent parser for the SimpCalc language.
- *
- * CSCI 70 Project #1: Scanning and Parsing
+ * Authors: Keith Ayeras, Elijem Timothy Jaso, Dave Predigua
+ * CSCI 70 SimpCalc Project: Scanning and Parsing
  *
  * Implements a top-down, recursive-descent parser. Each nonterminal in the
  * grammar has one corresponding C function. The parser reads tokens via
@@ -58,8 +58,7 @@ static void match(TokenType expected)
     if (cur.type == expected) {
         cur = gettoken();
     } else {
-        fprintf(pout, "Parse Error on line %d: %s Expected.\n",
-                cur.line, TOKEN_NAMES[expected]);
+        fprintf(pout, "Symbol expected\n");
         longjmp(err_jmp, 1);
     }
 }
@@ -71,7 +70,7 @@ static void Rel(void)
         cur.type == T_LTEQUAL || cur.type == T_GTEQUAL || cur.type == T_NOTEQUAL) {
         cur = gettoken();
     } else {
-        fprintf(pout, "Parse Error on line %d: Missing relational operator.\n", cur.line);
+        fprintf(pout, "Missing relational operator\n");
         longjmp(err_jmp, 1);
     }
 }
@@ -199,11 +198,27 @@ static void Iffollow(void)
     if (cur.type == T_ELSE) {
         match(T_ELSE);
         Blk();
-        match(T_ENDIF);
-        match(T_SEMICOLON);
+        if (cur.type != T_ENDIF) {
+            fprintf(pout, "Incomplete if Statement\n");
+            longjmp(err_jmp, 1);
+        }
+        cur = gettoken();
+        if (cur.type != T_SEMICOLON) {
+            fprintf(pout, "Incomplete if Statement\n");
+            longjmp(err_jmp, 1);
+        }
+        cur = gettoken();
     } else {
-        match(T_ENDIF);
-        match(T_SEMICOLON);
+        if (cur.type != T_ENDIF) {
+            fprintf(pout, "Incomplete if Statement\n");
+            longjmp(err_jmp, 1);
+        }
+        cur = gettoken();
+        if (cur.type != T_SEMICOLON) {
+            fprintf(pout, "Incomplete if Statement\n");
+            longjmp(err_jmp, 1);
+        }
+        cur = gettoken();
     }
 }
 
@@ -233,7 +248,8 @@ static void Stm(void)
         Iffollow();
         fprintf(pout, "If Statement Ends\n");
     } else {
-        match(T_IDENTIFIER);
+        fprintf(pout, "Invalid Statement\n");
+        longjmp(err_jmp, 1);
     }
 }
 

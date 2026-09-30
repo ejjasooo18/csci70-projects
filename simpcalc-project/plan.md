@@ -34,7 +34,7 @@ Only change `token.h` after telling the other two.
 ### Member A: Scanner ✅ done
 The DFA, keywords, strings, comments and every lexical-error format are implemented. See the header comment in [scanner.c](scanner.c).
 
-### Member B: Parser (`parser.c`, `parser.h`) ✅ done
+### Elijem Timothy Jaso: Parser (`parser.c`, `parser.h`) ✅ done
 1. Write one function per nonterminal: `Prg Blk Stm Argfollow Arg Iffollow Exp Trmfollow Trm Facfollow Fac Litfollow Lit Val Cnd Rel`. (Done)
 2. Use a global `Token cur` and `match(TokenType expected)`: if it matches, advance with `gettoken()`; otherwise print the error and **stop parsing that file**. (Done)
 3. Print the messages: `Assignment Statement Recognized`, `Print Statement Recognized`, `If Statement Begins` (at start of IF), and `If Statement Ends` (after Iffollow). (Done)
@@ -42,7 +42,7 @@ The DFA, keywords, strings, comments and every lexical-error format are implemen
 5. On error, print `Parse Error on line N: <TokenName> Expected.` (e.g. `Colon Expected.`) and stop. Stopping can be a `longjmp` or an `error` flag checked after each call. (Done)
 6. Test on all 9 samples. (All 9 samples verified and passing byte-for-byte). (Done)
 
-### Member C: Driver, integration, tests, submission (`main.c`, test script, README)
+### Dave Predigua: Driver, integration, tests, submission (`main.c`, test script, README)
 1. Install gcc (see HANDOFF.md). The build command is `gcc -Wall -o simpcalc main.c scanner.c parser.c`.
 2. `main.c`: list the directory (`<dirent.h>` works under MinGW), find every file whose name contains `_input`, compute both output names, open the files, and call `scanner_init` and then the parser.
 3. Scan output and parse output are **both produced from one pass**: each `gettoken()` call logs the token to the scan file. After the parser stops (success or error), keep calling `gettoken()` until `T_EOF` so the scan file is complete. (The scan samples list every token even when the parse stopped at line 1.)

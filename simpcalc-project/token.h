@@ -1,7 +1,7 @@
 /*
  * token.h - Token definitions shared by the SimpCalc scanner and parser.
- *
- * CSCI 70 Project #1: Scanning and Parsing
+ * Authors: Keith Ayeras, Elijem Timothy Jaso, Dave Predigua
+ * CSCI 70 SimpCalc Project: Scanning and Parsing
  *
  * This is the shared contract between the scanner (scanner.c) and the
  * parser (parser.c). Tell the rest of the team before changing it.

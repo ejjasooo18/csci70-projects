@@ -1,7 +1,7 @@
 /*
  * scanner.h - Public interface of the SimpCalc scanner (lexical analyzer).
- *
- * CSCI 70 Project #1: Scanning and Parsing
+ * Authors: Keith Ayeras, Elijem Timothy Jaso, Dave Predigua
+ * CSCI 70 SimpCalc Project: Scanning and Parsing
  *
  * Usage:
  *     scanner_init(in, scan_out);
