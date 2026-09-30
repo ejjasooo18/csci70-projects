@@ -1,0 +1,22 @@
+Identifier                     just
+Identifier                     a
+Identifier                     bunch
+Identifier                     of
+Identifier                     identifiers
+Identifier                     these
+Identifier                     have
+Identifier                     numb3Rs
+Identifier                     and
+Identifier                     under_sc0res
+Number                         1
+Identifier                     abc
+Identifier                     abc1
+If                             IF
+Identifier                     I
+Print                          PRINT
+Else                           ELSE
+Colon                          :
+Number                         12321
+Number                         98.76
+Lexical Error: Illegal character/character sequence   on line 6
+Error  on line 6
