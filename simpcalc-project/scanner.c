@@ -51,6 +51,7 @@ static FILE *out;           /* scanner output file (may be NULL) */
 static int line;            /* current line number, starting at 1 */
 static int pushback;        /* one character of pushback, or NO_CHAR */
 static int pending_dot;     /* set when a '.' follows an exponent (see scan_number) */
+static int stopped;         /* set after a lexical error; gettoken() returns silent EOF */
 
 #define NO_CHAR (-2)
 
@@ -140,6 +141,7 @@ static Token lex_error(LexError kind, const char *lexeme, int err_line)
             break;
         }
     }
+    stopped = 1;  /* halt scanning after any lexical error */
     return t;
 }
 
@@ -162,6 +164,7 @@ void scanner_init(FILE *in, FILE *scan_out)
     pushback = NO_CHAR;
     pending_dot = 0;
     eof_emitted = 0;
+    stopped = 0;
 }
 
 /* Skips whitespace and // comments. Returns the first character after them. */
@@ -300,6 +303,15 @@ static Token scan_string(int start_line)
 Token gettoken(void)
 {
     int c, next, start_line;
+
+    /* After a lexical error the scanner is done; return silent EOF. */
+    if (stopped) {
+        Token t;
+        t.type = T_EOF;
+        strncpy(t.lexeme, " ", MAX_LEXEME - 1);
+        t.line = line;
+        return t;
+    }
 
     if (pending_dot) {
         pending_dot = 0;

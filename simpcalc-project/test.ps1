@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 # test.ps1 - Test script for SimpCalc
-# Authors: Keith Ayeras, Member B, Member C
+# Authors: Keith Ayeras, Elijem Timothy Jaso, Dave Predigua
 
 Write-Host "Compiling..."
 gcc -Wall -o simpcalc.exe main.c scanner.c parser.c
