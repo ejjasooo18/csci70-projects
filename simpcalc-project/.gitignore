@@ -1,0 +1,26 @@
+# Compiled programs and object files
+*.exe
+*.o
+*.obj
+a.out
+*.dSYM/
+
+# Local test output (the expected outputs in "PROJECT SAMPLES-1/" stay tracked)
+test_out/
+my_scan_*.txt
+test_scan_*.txt
+mytest*.txt
+/*_output_scan_*.txt
+/*_output_parse_*.txt
+
+# Submission zip (upload to Canvas, not GitHub)
+*.zip
+
+# Editor and OS files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini

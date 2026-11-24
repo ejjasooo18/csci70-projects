@@ -1,0 +1,13 @@
+Identifier                     a_
+If                             IF
+Else                           ELSE
+Endif                          ENDIF
+Sqrt                           SQRT
+Print                          PRINT
+And                            AND
+Or                             OR
+Not                            NOT
+Number                         123211231
+Number                         98.3243246
+Lexical Error: Illegal character/character sequence   on line 6
+Error  on line 6
