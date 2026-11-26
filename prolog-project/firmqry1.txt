@@ -21,3 +21,21 @@ same_department(julia, martha).
 
 % f. Is john assigned to proj2?
 assigned(john, proj2).
+
+% g. List all projects assigned to martha.
+assigned(martha, P).
+
+% h. Are martha and josh assigned to the same project?
+same_project(martha, josh), !.
+
+% i. Who are the employees assigned to proj1?
+assigned(X, proj1).
+
+% j. Which departments have employees assigned to projects?
+setof(D, has_assigned(D), Ds).
+
+% k. Does the marketing department have employees?
+has_employees(marketing), !.
+
+% l. Does the accounting department have employees?
+has_employees(accounting).

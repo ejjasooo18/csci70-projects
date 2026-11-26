@@ -61,4 +61,12 @@ same_department(X, Y) :- works_in(X, D), works_in(Y, D), X \= Y.
  * Rules g-l
  * ------------------------------------------------------------------ */
 
-% (Member B: add same_project/2, has_assigned/1, has_employees/1 here.)
+% same_project(X, Y): X and Y are two different employees
+% assigned to at least one common project.
+same_project(X, Y) :- assigned(X, P), assigned(Y, P), X \= Y.
+
+% has_assigned(D): department D has at least one employee assigned to a project.
+has_assigned(D) :- works_in(E, D), assigned(E, _).
+
+% has_employees(D): department D has at least one employee.
+has_employees(D) :- works_in(_, D).
