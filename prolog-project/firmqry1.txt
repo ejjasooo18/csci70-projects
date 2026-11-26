@@ -1,0 +1,23 @@
+% firmqry1.txt - Queries for Part 1 (load first with: [firm1].)
+% Authors: Keith Ayeras, Elijem Timothy Jaso, Dave Predigua
+% CSCI 70 Prolog Project: Describing a Firm
+%
+% For queries that list answers, press ; to see the next answer.
+
+% a. Is martha an employee?
+employee(martha).
+
+% b. List all employees.
+employee(X).
+
+% c. List all those under the marketing department.
+works_in(X, marketing).
+
+% d. Are julia and jack under the same department?
+same_department(julia, jack), !.
+
+% e. Are julia and martha under the same department?
+same_department(julia, martha).
+
+% f. Is john assigned to proj2?
+assigned(john, proj2).
